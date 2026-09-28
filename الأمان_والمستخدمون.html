@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<script>/* 🔒 صفحة داخلية — تسمح بالواجهات الداخلية.
+   الغياب = صفحة عامّة: المنع افتراضياً كي لا يكون النسيان تسريباً. */
+window.GMT_INTERNAL = 1;</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🔐 الأمان والمستخدمون — GMT</title>
+<link rel="icon" type="image/jpeg" href="logo.jpg">
+<link rel="stylesheet" href="gmt-theme.css?v=20260926">
+<style>
+  :root{ --red:#C00012; --ink:#111827; --mut:#6B7280; --line:#E5E7EB; --bg:#F2F3F5; --card:#FFFFFF;
+         --ok:#047857; --okbg:#ECFDF5; --bad:#B91C1C; --badbg:#FEF2F2; --warn:#92400E; --warnbg:#FFFBEB; }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --ink:#F3F4F6; --mut:#9CA3AF; --line:#2A2F3A; --bg:#12151B; --card:#1A1E26; }
+  }
+  :root[data-theme="dark"]{ --ink:#F3F4F6; --mut:#9CA3AF; --line:#2A2F3A; --bg:#12151B; --card:#1A1E26; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Cairo',system-ui,Tahoma,sans-serif;background:var(--bg);color:var(--ink);line-height:1.85;padding:14px}
+  .wrap{max-width:820px;margin:0 auto;padding-bottom:50px}
+  header{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 15px;margin-bottom:12px;
+         display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  header img{height:42px;width:auto;object-fit:contain;flex-shrink:0}
+  .hbar{padding-inline-start:12px;border-inline-start:2px solid var(--line)}
+  h1{font-size:16.5px;font-weight:900;color:var(--red)}
+  .sub{font-size:11.5px;color:var(--mut);font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;margin-bottom:12px}
+  .card h2{font-size:14.5px;font-weight:900;margin-bottom:3px;display:flex;align-items:center;gap:7px}
+  .card .desc{font-size:12px;color:var(--mut);font-weight:700;margin-bottom:12px}
+  .row{border:1px solid var(--line);border-radius:12px;padding:11px;margin-bottom:9px;background:transparent}
+  .row .lbl{font-weight:900;font-size:13.5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .tag{font-size:10px;font-weight:900;border-radius:7px;padding:2px 8px}
+  .tag.def{background:var(--warnbg);color:var(--warn);border:1px solid #FDE68A}
+  .tag.set{background:var(--okbg);color:var(--ok);border:1px solid #A7F3D0}
+  .tag.dev{background:#EEF2FF;color:#4338CA;border:1px solid #C7D2FE}
+  .field{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}
+  input,select{flex:1;min-width:130px;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;
+        padding:9px 11px;font:inherit;font-size:13px;font-weight:700;color:var(--ink);outline:none}
+  input:focus,select:focus{border-color:var(--red)}
+  .btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:9px 14px;font:inherit;
+        font-weight:800;font-size:12.5px;cursor:pointer;white-space:nowrap}
+  .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+  .btn.ok{background:var(--ok)} .btn.bad{background:var(--bad)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .msg{font-size:12px;font-weight:800;margin-top:7px}
+  .msg.ok{color:var(--ok)} .msg.bad{color:var(--bad)}
+  .note{background:var(--warnbg);border:1px solid #FDE68A;border-radius:12px;padding:11px 13px;
+        font-size:12px;font-weight:700;line-height:1.95;color:var(--warn)}
+  .danger{background:var(--badbg);border:1px solid #FECACA;color:var(--bad)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right}
+  th{font-weight:900;font-size:11px;color:var(--mut)}
+  .gate{max-width:380px;margin:60px auto;text-align:center}
+  .back{display:inline-block;margin-bottom:10px;font-size:12px;font-weight:800;color:var(--mut);text-decoration:none}
+  .back:hover{color:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- ══ بوّابة الدخول ══════════════════════════════════════════════════════
+     الصفحة كلّها خلف كلمة السرّ السيادية. وليست حمايةً حقيقية — هي منع
+     الخطأ العابر. الحماية الحقيقية سياسات RLS، وهذا مكتوب صراحةً في الأسفل.
+     ══════════════════════════════════════════════════════════════════════ -->
+<div id="gate" class="gate">
+  <div class="card">
+    <h2>🔐 الأمان والمستخدمون</h2>
+    <div class="desc">أدخل كلمة السرّ السيادية للمتابعة</div>
+    <input id="gate-pw" type="password" placeholder="كلمة السرّ السيادية" onkeydown="if(event.key==='Enter')unlock()">
+    <div class="field"><button class="btn" style="flex:1" onclick="unlock()">دخول</button></div>
+    <div id="gate-msg" class="msg"></div>
+    <div class="desc" style="margin-top:10px">إن لم تُغيّرها بعد فهي <b>0000</b></div>
+  </div>
+</div>
+
+<div id="app" class="wrap" style="display:none">
+  <a class="back" href="home.html">← رجوع للواجهة الرئيسية</a>
+
+  <header>
+    <img src="logo.png" alt="مجموعة ميديا تيك" onerror="this.onerror=null;this.src='logo.jpg'">
+    <div class="hbar">
+      <h1>🔐 الأمان والمستخدمون</h1>
+      <div class="sub">كل كلمات السرّ · وكل الحسابات — في مكان واحد</div>
+    </div>
+  </header>
+
+  <!-- ══ عطل مكتشَف يستحقّ أن يُرى أوّلاً ══════════════════════════════════ -->
+  <div class="card">
+    <div class="note danger">
+      🔴 <b>عطل وجدناه وأصلحناه — اقرأه قبل أي شيء.</b><br>
+      كانت كلمة السرّ السيادية <b>مسارين منفصلين</b>: أداة السيادة تحفظ في مكان،
+      وفكّ ختم الجرد وفكّ ختم المشتريات يقرآن مكاناً آخر <b>لا يكتب فيه أحد</b>.
+      فكنتَ تغيّرها ولا تتغيّر عندهما، وتبقى الكلمة المكتوبة في الشيفرة المنشورة
+      مقبولةً عندهما.<br>
+      صار كل فحص يمرّ من مصدر واحد (<code>gmt-auth.js</code>)، وما تضبطه هنا يسري
+      على النظام كلّه. <b>غيّرها الآن — فالقديمة معروفة.</b>
+    </div>
+  </div>
+
+  <!-- ══ كلمات السرّ ══════════════════════════════════════════════════════ -->
+  <div class="card">
+    <h2>🔑 كلمات سرّ النظام</h2>
+    <div class="desc">
+      الحفظ في <b>قاعدة البيانات</b> ⇒ تسري على كل الأجهزة. وتُحفَظ <b>كبصمة</b>
+      لا كنصّ، فمن يقرأ الجدول لا يقرأ الكلمة.
+    </div>
+    <div id="pw-rows"></div>
+  </div>
+
+  <!-- ══ المستخدمون ══════════════════════════════════════════════════════ -->
+  <div class="card">
+    <h2>👥 المستخدمون والموظّفون</h2>
+    <div class="desc">
+      نفس حسابات الدخول لنقاط البيع والكفالة والعقود (جدول <code>gmt_users</code>)
+      — بنفس الترميز الذي تستعمله صفحة الأدمن، فلا ينكسر دخولٌ قائم.
+    </div>
+
+    <div class="row">
+      <div class="lbl">➕ إضافة مستخدم</div>
+      <div class="field">
+        <input id="u-name" placeholder="الاسم الظاهر (محمد خير)">
+        <input id="u-user" placeholder="اسم المستخدم (بالإنكليزي)">
+      </div>
+      <div class="field">
+        <input id="u-pw" placeholder="كلمة السرّ" value="0000">
+        <input id="u-branch" placeholder="مفتاح الفرع (halab…)">
+        <button class="btn ok" onclick="addUser()">إضافة</button>
+      </div>
+      <div id="u-msg" class="msg"></div>
+    </div>
+
+    <!-- 🧪 (2026-09-27 · طلب المالك) «أنشئ الآن مستخدماً وهمياً بكل نقاط البيع،
+         اسمه 0000 وكلمة المرور 0000، يمكن تعديله بعدين». -->
+    <div class="row">
+      <div class="lbl">🧪 مستخدم التجربة <span class="tag def">0000 / 0000</span></div>
+      <div class="desc" style="margin:6px 0 0">
+        يُنشأ في <b>كل فرع</b> دفعةً واحدة، <b>عامّاً</b> (أي جهاز يدخل منه).
+        احذفه أو اقفله على جهاز متى شئت من الجدول تحت.
+      </div>
+      <div class="field"><button class="btn ok" onclick="makeTestUsers()">أنشئ مستخدم التجربة في كل الفروع</button></div>
+      <div id="t-msg" class="msg"></div>
+    </div>
+
+    <div style="overflow:auto">
+      <table>
+        <thead><tr><th>الاسم</th><th>المستخدم</th><th>الفرع</th><th>الحالة</th><th>قفل الجهاز</th><th>إجراءات</th></tr></thead>
+        <tbody id="u-rows"><tr><td colspan="6" style="text-align:center;color:var(--mut)">…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="note">
+      ⚠️ <b>حدود هذه الحماية — بصراحة.</b><br>
+      هذه كلمات <b>واجهة</b>: الصفحات تتّصل بالقاعدة بمفتاح عام، ومن يفتح أدوات
+      المطوّر يستطيع تجاوز أي فحص في المتصفّح. الحماية الحقيقية الوحيدة هي
+      <b>سياسات RLS</b> في Supabase.<br>
+      فهذه تمنع الخطأ العابر وسوء الاستعمال اليومي — لا مهاجماً يعرف ما يفعل.
+      ولا نقول غير ذلك كي لا تبني على وهم.
+    </div>
+  </div>
+</div>
+
+<script src="gmt-core.js?v=20260926"></script>
+<script src="gmt-auth.js?v=20260926"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) {
+    return String(s === null || s === undefined ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function b64(str) {                      // نفس ترميز admin_pos.html حرفياً
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+      function (_, p) { return String.fromCharCode('0x' + p); }));
+  }
+  function D() { return (window.GMT_DB && window.GMT_DB.MAIN) || null; }
+  async function sb(method, path, body, extra) {
+    var d = D();
+    if (!d) throw new Error('إعدادات القاعدة غير متاحة');
+    var h = { apikey: d.key, Authorization: 'Bearer ' + d.key, 'Content-Type': 'application/json' };
+    Object.keys(extra || {}).forEach(function (k) { h[k] = extra[k]; });
+    var o = { method: method, headers: h };
+    if (body) o.body = JSON.stringify(body);
+    var r = await fetch(d.url + path, o);
+    if (!r.ok) throw new Error('HTTP ' + r.status + ' — ' + (await r.text()).slice(0, 140));
+    var txt = await r.text();
+    return txt ? JSON.parse(txt) : null;
+  }
+
+  // ══ الدخول ══
+  window.unlock = async function () {
+    var pw = $('gate-pw').value;
+    var ok = false;
+    try { ok = await GMTAuth.check('sovereign', pw); } catch (e) {}
+    if (!ok) { $('gate-msg').className = 'msg bad'; $('gate-msg').textContent = '⛔ كلمة سر غير صحيحة'; return; }
+    $('gate').style.display = 'none';
+    $('app').style.display = '';
+    renderPasswords();
+    loadUsers();
+  };
+
+  // ══ كلمات السرّ ══
+  async function renderPasswords() {
+    var box = $('pw-rows');
+    var kinds = Object.keys(GMTAuth.KINDS);
+    box.innerHTML = '<div class="desc">⏳ …</div>';
+    try { await GMTAuth.load(false); } catch (e) {}   // نداء واحد للقاعدة لا ستّة
+    box.innerHTML = '';
+    for (var i = 0; i < kinds.length; i++) {
+      var kind = kinds[i], k = GMTAuth.KINDS[kind];
+      var isDef = true, hasLocal = false;
+      try { isDef = await GMTAuth.isDefault(kind); } catch (e) {}
+      try { hasLocal = !!localStorage.getItem(k.local); } catch (e) {}
+      var div = document.createElement('div');
+      div.className = 'row';
+      div.innerHTML =
+        '<div class="lbl">🔒 ' + esc(k.label) +
+          (hasLocal ? ' <span class="tag dev">مضبوطة على هذا الجهاز</span>'
+                    : (isDef ? ' <span class="tag def">ما زالت الافتراضية 0000</span>'
+                             : ' <span class="tag set">مضبوطة</span>')) +
+        '</div>' +
+        '<div class="field">' +
+          '<input id="p_' + kind + '" type="password" placeholder="كلمة السرّ الجديدة">' +
+          '<button class="btn ghost" data-eye="' + kind + '">👁</button>' +
+          '<button class="btn" data-save="' + kind + '">حفظ للجميع</button>' +
+        '</div>' +
+        (hasLocal ? '<div class="field"><button class="btn ghost" data-clear="' + kind + '">' +
+                    'إزالة كلمة هذا الجهاز (لتسري كلمة القاعدة)</button></div>' : '') +
+        '<div id="m_' + kind + '" class="msg"></div>';
+      box.appendChild(div);
+    }
+  }
+
+  document.addEventListener('click', async function (e) {
+    var t = e.target.closest ? e.target.closest('[data-save],[data-eye],[data-clear]') : null;
+    if (!t) return;
+    var eye = t.getAttribute('data-eye');
+    if (eye) { var el = $('p_' + eye); el.type = el.type === 'password' ? 'text' : 'password'; return; }
+    var clr = t.getAttribute('data-clear');
+    if (clr) { GMTAuth.setLocal(clr, ''); renderPasswords(); return; }
+    var kind = t.getAttribute('data-save');
+    if (!kind) return;
+    var val = $('p_' + kind).value;
+    var m = $('m_' + kind);
+    if (!val || val.length < 3) { m.className = 'msg bad'; m.textContent = 'اكتب 3 محارف على الأقل'; return; }
+    t.disabled = true; m.className = 'msg'; m.textContent = '⏳ جارٍ الحفظ…';
+    try {
+      await GMTAuth.setDb(kind, val);
+      m.className = 'msg ok'; m.textContent = '✅ حُفظت — تسري على كل الأجهزة';
+      $('p_' + kind).value = '';
+      renderPasswords();
+    } catch (err) {
+      m.className = 'msg bad'; m.textContent = '🔴 ' + (err.message || 'فشل الحفظ');
+    }
+    t.disabled = false;
+  });
+
+  // ══ المستخدمون ══
+  /* 🔓 العلامة الصريحة للحساب العامّ — نفسها في pos.html و admin_pos.html.
+     ثلاث حالات في عمود واحد بلا أي تعديل على قاعدة البيانات:
+       null = يُربَط بأوّل جهاز · OPEN-ANY-DEVICE = أي جهاز · بصمة = جهاز واحد */
+  var OPEN_DEVICE = 'OPEN-ANY-DEVICE';
+  var USERS = [];
+  async function loadUsers() {
+    var tb = $('u-rows');
+    try {
+      USERS = (await sb('GET', '/rest/v1/gmt_users?order=created_at.desc&select=*')) || [];
+    } catch (e) {
+      tb.innerHTML = '<tr><td colspan="6" style="color:var(--bad);text-align:center">تعذّر تحميل المستخدمين: ' + esc(e.message) + '</td></tr>';
+      return;
+    }
+    if (!USERS.length) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--mut)">لا مستخدمين</td></tr>'; return; }
+    tb.innerHTML = USERS.map(function (u) {
+      return '<tr>' +
+        '<td>' + esc(u.display_name || '') + '</td>' +
+        '<td dir="ltr">' + esc(u.username || '') + '</td>' +
+        '<td>' + esc(u.branch_key || '—') + '</td>' +
+        '<td>' + (u.is_active === false ? '⛔ موقوف' : '✅ فعّال') + '</td>' +
+        '<td>' + (u.last_device_id === OPEN_DEVICE
+                   ? '<span class="tag set">🔓 عامّ</span>'
+                   : (u.last_device_id ? '<span class="tag dev">📱 مربوط</span>'
+                                       : '<span class="tag def">⏳ يُربَط بأوّل دخول</span>')) + '</td>' +
+        '<td style="white-space:nowrap">' +
+          '<button class="btn ghost" data-u-ren="' + esc(u.id) + '">✏️ اسم</button> ' +
+          '<button class="btn ghost" data-u-pw="' + esc(u.id) + '">🔑 كلمة</button> ' +
+          '<button class="btn ghost" data-u-dev="' + esc(u.id) + '">' +
+             (u.last_device_id === OPEN_DEVICE ? '📱 اقفل' : '🔓 عامّ') + '</button> ' +
+          '<button class="btn ghost" data-u-tog="' + esc(u.id) + '">' + (u.is_active === false ? 'تفعيل' : 'إيقاف') + '</button> ' +
+          '<button class="btn bad" data-u-del="' + esc(u.id) + '">حذف</button>' +
+        '</td></tr>';
+    }).join('');
+  }
+
+  window.addUser = async function () {
+    var name = $('u-name').value.trim(), user = $('u-user').value.trim();
+    var pw = $('u-pw').value, br = $('u-branch').value.trim();
+    var m = $('u-msg');
+    if (!name || !user || !pw) { m.className = 'msg bad'; m.textContent = 'الاسم واسم المستخدم وكلمة السرّ مطلوبة'; return; }
+    m.className = 'msg'; m.textContent = '⏳ …';
+    try {
+      await sb('POST', '/rest/v1/gmt_users', {
+        display_name: name, username: user, password_hash: b64(pw),
+        branch_key: br || null, is_active: true
+      }, { Prefer: 'return=minimal' });
+      m.className = 'msg ok'; m.textContent = '✅ أُضيف';
+      $('u-name').value = ''; $('u-user').value = ''; $('u-pw').value = '0000';
+      loadUsers();
+    } catch (e) {
+      m.className = 'msg bad';
+      m.textContent = /duplicate|unique/i.test(e.message) ? '⚠️ اسم المستخدم موجود مسبقاً' : ('🔴 ' + e.message);
+    }
+  };
+
+  window.makeTestUsers = async function () {
+    var m = $('t-msg');
+    m.className = 'msg'; m.textContent = '⏳ جارٍ قراءة الفروع…';
+    var brs = [];
+    try {
+      brs = (await sb('GET', '/rest/v1/inv_columns?is_branch=eq.true&order=sort_order.asc&select=key_name,display_name')) || [];
+    } catch (err) { m.className = 'msg bad'; m.textContent = '🔴 تعذّر قراءة الفروع: ' + err.message; return; }
+    if (!brs.length) { m.className = 'msg bad'; m.textContent = 'لا فروع في inv_columns'; return; }
+
+    var made = [], skipped = [], failed = [];
+    for (var i = 0; i < brs.length; i++) {
+      var key = brs[i].key_name;
+      try {
+        /* موجود مسبقاً؟ لا نكرّره ولا ندهس كلمته: قد يكون عدّله. */
+        var ex = await sb('GET', '/rest/v1/gmt_users?username=eq.0000&branch_key=eq.' +
+                                  encodeURIComponent(key) + '&select=id');
+        if (ex && ex.length) { skipped.push(brs[i].display_name || key); continue; }
+        await sb('POST', '/rest/v1/gmt_users', {
+          display_name: 'مستخدم تجربة', username: '0000', password_hash: b64('0000'),
+          branch_key: key, is_active: true, last_device_id: OPEN_DEVICE
+        }, { Prefer: 'return=minimal' });
+        made.push(brs[i].display_name || key);
+      } catch (err) { failed.push((brs[i].display_name || key) + ': ' + err.message); }
+    }
+    m.className = failed.length ? 'msg bad' : 'msg ok';
+    m.innerHTML = (made.length ? '✅ أُنشئ في: ' + esc(made.join(' · ')) : '') +
+                  (skipped.length ? '<br>ℹ️ موجود مسبقاً في: ' + esc(skipped.join(' · ')) : '') +
+                  (failed.length ? '<br>🔴 فشل: ' + esc(failed.join(' | ')) : '');
+    loadUsers();
+  };
+
+  document.addEventListener('click', async function (e) {
+    var t = e.target.closest ? e.target.closest('[data-u-ren],[data-u-pw],[data-u-tog],[data-u-del],[data-u-dev]') : null;
+    if (!t) return;
+    var id = t.getAttribute('data-u-ren') || t.getAttribute('data-u-pw') ||
+             t.getAttribute('data-u-tog') || t.getAttribute('data-u-del');
+    var u = USERS.filter(function (x) { return String(x.id) === String(id); })[0];
+    if (!u) return;
+    try {
+      if (t.hasAttribute('data-u-ren')) {
+        var nn = prompt('الاسم الظاهر:', u.display_name || '');
+        if (nn === null || !nn.trim()) return;
+        await sb('PATCH', '/rest/v1/gmt_users?id=eq.' + encodeURIComponent(id),
+                 { display_name: nn.trim() }, { Prefer: 'return=minimal' });
+      } else if (t.hasAttribute('data-u-pw')) {
+        var np = prompt('كلمة السرّ الجديدة لـ ' + (u.display_name || u.username) + ':', '0000');
+        if (np === null || !np) return;
+        await sb('PATCH', '/rest/v1/gmt_users?id=eq.' + encodeURIComponent(id),
+                 { password_hash: b64(np) }, { Prefer: 'return=minimal' });
+      } else if (t.hasAttribute('data-u-dev')) {
+        var mkOpen = (u.last_device_id !== OPEN_DEVICE);
+        if (!confirm(mkOpen
+              ? 'اجعل «' + (u.display_name || u.username) + '» حساباً عامّاً؟\nأي جهاز يستطيع الدخول به.'
+              : 'اقفله على جهاز واحد؟\nيُربَط بأوّل جهاز يدخل منه بعد الآن.')) return;
+        await sb('PATCH', '/rest/v1/gmt_users?id=eq.' + encodeURIComponent(id),
+                 { last_device_id: mkOpen ? OPEN_DEVICE : null }, { Prefer: 'return=minimal' });
+      } else if (t.hasAttribute('data-u-tog')) {
+        await sb('PATCH', '/rest/v1/gmt_users?id=eq.' + encodeURIComponent(id),
+                 { is_active: u.is_active === false }, { Prefer: 'return=minimal' });
+      } else {
+        /* الحذف يحتاج تأكيداً باسم المستخدم نفسه: زرّ حذفٍ بضغطة واحدة بجانب
+           زرّ «إيقاف» وصفةٌ لحذف حساب بالخطأ. والإيقاف يكفي في أغلب الحالات. */
+        var typed = prompt('⚠️ حذف نهائي للحساب.\nاكتب اسم المستخدم للتأكيد:\n' + (u.username || ''));
+        if (typed === null) return;
+        if (String(typed).trim() !== String(u.username || '').trim()) { alert('لم يطابق — لم يُحذف شيء.'); return; }
+        await sb('DELETE', '/rest/v1/gmt_users?id=eq.' + encodeURIComponent(id), null, { Prefer: 'return=minimal' });
+      }
+      loadUsers();
+    } catch (err) { alert('🔴 ' + (err.message || 'فشل')); }
+  });
+})();
+</script>
+<!-- 🆕 «شو الجديد» — أخبار داخلية، لا تُحمَّل على صفحات الزبون -->
+<script src="gmt-whatsnew.js?v=20260926"></script>
+</body>
+</html>

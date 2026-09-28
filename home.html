@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<script>/* 🔒 صفحة داخلية — تسمح بالواجهات الداخلية (تلميحات · مفتّش · فحص ذاتي).
+   الغياب = صفحة عامّة: المنع افتراضياً كي لا يكون النسيان تسريباً. */
+window.GMT_INTERNAL = 1;</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GMT — الصفحة الرئيسية · كل شيء</title>
+<link rel="icon" href="favicon.ico">
+<link rel="stylesheet" href="gmt-theme.css?v=20260926">
+<style>
+  :root{
+    --red:#D5001C; --red-dark:#A80016; --dark:#0f1219; --card:#fff;
+    --muted:#6b7280; --line:#e8eaed; --bg1:#f7f8fa; --bg2:#eceff3;
+    --ok:#16a34a; --err:#C00012; --warn:#d97706;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;
+    background:linear-gradient(165deg,var(--bg1),var(--bg2));color:#1f2937;min-height:100vh}
+
+  /* شريط تقدّم فحص النشر (يمتلئ أثناء الفحص) — العنصر المميّز */
+  #scan-bar{position:fixed;top:0;right:0;height:3px;width:0;background:var(--red);
+    z-index:50;transition:width .25s ease;box-shadow:0 0 8px rgba(213,0,28,.6)}
+
+  header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .head-in{max-width:1160px;margin:0 auto;padding:14px 18px;display:flex;
+    align-items:center;gap:14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:11px;flex-shrink:0}
+  .logo{width:46px;height:46px;border-radius:13px;background:var(--red);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;
+    box-shadow:0 6px 18px rgba(213,0,28,.32);letter-spacing:.5px}
+  .brand h1{font-size:17px;font-weight:900;color:var(--dark);line-height:1.2}
+  .brand .sub{font-size:11.5px;color:var(--muted);margin-top:1px}
+
+  .search-wrap{flex:1;min-width:190px;position:relative}
+  #q{width:100%;padding:11px 40px 11px 14px;border:1.5px solid var(--line);border-radius:12px;
+    font-size:14px;font-family:inherit;background:#fff;transition:.15s}
+  #q:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(213,0,28,.1)}
+  .search-wrap .si{position:absolute;top:50%;right:13px;transform:translateY(-50%);
+    font-size:16px;color:var(--muted);pointer-events:none}
+  .kbd{position:absolute;top:50%;left:11px;transform:translateY(-50%);font-size:10px;
+    color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 6px;background:#fafafa}
+
+  .scan-btn{flex-shrink:0;border:1.5px solid var(--line);background:#fff;color:var(--dark);
+    font-family:inherit;font-size:12.5px;font-weight:800;padding:10px 15px;border-radius:12px;
+    cursor:pointer;display:flex;align-items:center;gap:7px;transition:.15s}
+  .scan-btn:hover{border-color:var(--red);color:var(--red)}
+  .scan-btn:disabled{opacity:.55;cursor:default}
+  .scan-btn .dot{width:8px;height:8px;border-radius:99px;background:var(--muted)}
+
+  .wrap{max-width:1160px;margin:0 auto;padding:8px 18px 60px}
+
+  .meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 2px 6px;
+    font-size:12.5px;color:var(--muted)}
+  .meta .pill{background:#fff;border:1px solid var(--line);border-radius:99px;padding:4px 11px;font-weight:700}
+  .meta .pill b{color:var(--dark)}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;margin-inline-start:auto}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .ld{width:9px;height:9px;border-radius:99px;display:inline-block}
+
+  .section{margin-top:26px}
+  .section h2{font-size:14px;font-weight:900;color:var(--dark);margin-bottom:13px;
+    display:flex;align-items:center;gap:9px}
+  .section h2::before{content:"";width:4px;height:17px;border-radius:3px;background:var(--red)}
+  .section h2 .cnt{font-size:11px;font-weight:800;color:var(--muted);
+    background:#fff;border:1px solid var(--line);border-radius:99px;padding:2px 9px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:12px}
+
+  .card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:15px;
+    padding:15px 15px 14px;text-decoration:none;color:inherit;display:flex;flex-direction:column;
+    gap:9px;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+  .card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(15,18,25,.09);border-color:var(--red)}
+  .card:focus-visible{outline:3px solid rgba(213,0,28,.35);outline-offset:2px}
+  .card .row1{display:flex;align-items:center;gap:11px}
+  .card .ic{font-size:25px;line-height:1;flex-shrink:0}
+  .card .t{font-weight:900;font-size:14.5px;color:var(--dark);flex:1;line-height:1.25}
+  .card .d{font-size:11.8px;color:var(--muted);line-height:1.55}
+  .card .tags{display:flex;align-items:center;gap:6px;margin-top:1px}
+  .db{font-size:9.5px;font-weight:800;padding:2px 8px;border-radius:99px;letter-spacing:.3px}
+  .db.MAIN{background:#eff6ff;color:#1d4ed8}
+  .db.STORE{background:#fef3c7;color:#b45309}
+  .db.SITE{background:#f0fdf4;color:#15803d}
+  .db.WARRANTY{background:#faf5ff;color:#7e22ce}
+
+  /* نقطة حالة النشر الحيّة (تُملأ عند الفحص) */
+  .st{position:absolute;top:12px;left:12px;width:10px;height:10px;border-radius:99px;
+    background:#e5e7eb;transition:.2s}
+  .st.ok{background:var(--ok);box-shadow:0 0 0 3px rgba(22,163,74,.15)}
+  .st.err{background:var(--err);box-shadow:0 0 0 3px rgba(192,0,18,.15)}
+  .st.warn{background:var(--warn);box-shadow:0 0 0 3px rgba(217,119,6,.15)}
+  .st.loading{background:var(--muted);animation:pulse 1s infinite}
+  @keyframes pulse{50%{opacity:.35}}
+  .card.is404{border-color:rgba(192,0,18,.4);background:#fff8f8}
+  .card.is404 .t::after{content:" · 404";color:var(--err);font-size:11px;font-weight:800}
+
+  #empty{display:none;text-align:center;color:var(--muted);padding:50px 20px;font-size:14px}
+  footer{text-align:center;color:var(--muted);font-size:11.5px;margin-top:40px;line-height:1.9}
+  footer b{color:var(--dark)}
+
+  @media (max-width:560px){
+    .head-in{padding:11px 13px;gap:10px}
+    .brand h1{font-size:15px}.kbd{display:none}
+    .grid{grid-template-columns:1fr 1fr;gap:9px}
+    .card{padding:12px}.card .ic{font-size:22px}.card .t{font-size:13px}
+    .legend{width:100%;margin:4px 0 0}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto}}
+</style>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div id="scan-bar"></div>
+
+<header>
+  <div class="head-in">
+    <a class="brand" href="home.html" style="text-decoration:none">
+      <div class="logo" data-gmt-brand="1"><img src="logo.jpg" alt="General Media Tech" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.onerror=null;this.src=GMT_BRAND.logo"></div>
+      <div><h1>الصفحة الرئيسية</h1><div class="sub">كل صفحات النظام في مكان واحد — بلا استثناء</div></div>
+    </a>
+    <div class="search-wrap">
+      <input id="q" type="search" placeholder="ابحث عن صفحة… (جرد · كاشير · كفالة · عمولات…)"
+             autocomplete="off" aria-label="ابحث عن صفحة">
+      <span class="si">🔎</span><span class="kbd">/</span>
+    </div>
+    <button class="scan-btn" id="scanBtn" onclick="runScan()" title="فحص أي صفحة مرفوعة وأيّها 404">
+      <span class="dot" id="scanDot"></span><span id="scanTxt">افحص النشر</span>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- 🧠 عقل النظام — بطاقة بارزة (2026-08-26 · طلب المالك: «أهم شي بالواجهة الرئيسية لازم يكون موجود عقل النظام») -->
+  <button type="button" onclick="window.GMTBrain ? GMTBrain.open() : alert('عقل النظام غير محمّل — تأكّد من رفع gmt-brain.js')"
+          style="width:100%;margin:16px 0 4px;display:flex;align-items:center;gap:14px;text-align:right;
+                 background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;border:0;border-radius:16px;
+                 padding:16px 18px;cursor:pointer;font-family:inherit;box-shadow:0 10px 28px rgba(15,23,42,.25)">
+    <span style="font-size:34px;line-height:1;flex-shrink:0">🧠</span>
+    <span style="flex:1">
+      <span style="display:block;font-size:16px;font-weight:900">عقل النظام</span>
+      <span style="display:block;font-size:12px;opacity:.75;font-weight:700;margin-top:3px;line-height:1.7">
+        اسأل عن أي خطأ (شو يعني وهل هو خطير) · كيف أعمل خطوة · رشّحلي لزبون من بضاعتنا · افحص صحة النظام
+      </span>
+    </span>
+    <span style="background:#D5001C;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:900;flex-shrink:0">اسأل</span>
+  </button>
+
+  <!-- 📈 سجل المبيعات — أداة بارزة (2026-08-26 · طلب المالك) -->
+  <a href="sales_log.html"
+     style="display:flex;align-items:center;gap:14px;text-decoration:none;margin:8px 0 4px;
+            background:#fff;border:1.5px solid #fecaca;border-right:5px solid #D5001C;border-radius:16px;
+            padding:14px 18px;color:#0f1219;box-shadow:0 4px 14px rgba(213,0,28,.08)">
+    <span style="font-size:30px;line-height:1;flex-shrink:0">📈</span>
+    <span style="flex:1">
+      <span style="display:block;font-size:15px;font-weight:900">سجل المبيعات والأرباح</span>
+      <span style="display:block;font-size:12px;color:#6b7280;font-weight:700;margin-top:3px;line-height:1.7">
+        شو أكثر شي عم نبيع هالشهر · الربح والهامش · من كل الأفرع
+      </span>
+    </span>
+    <span style="color:#D5001C;font-weight:900;font-size:20px;flex-shrink:0">‹</span>
+  </a>
+
+  <div class="meta">
+    <span class="pill">الإجمالي <b id="total">0</b> صفحة</span>
+    <span class="pill" id="shownPill" style="display:none">ظاهر <b id="shown">0</b></span>
+    <span class="pill" id="scanPill" style="display:none">✅ <b id="okN">0</b> · 🔴 <b id="errN">0</b></span>
+    <span class="legend">
+      <span><i class="ld" style="background:#e5e7eb"></i>غير مفحوص</span>
+      <span><i class="ld" style="background:var(--ok)"></i>مرفوعة</span>
+      <span><i class="ld" style="background:var(--err)"></i>404</span>
+    </span>
+  </div>
+
+  <div id="board"></div>
+  <div id="empty">لا صفحة تطابق «<b id="qEcho"></b>». جرّب كلمة أخرى.</div>
+
+  <footer>
+    نظام <b>General Media Tech</b> — ERP كامل · 32 صفحة عبر 4 قواعد Supabase<br>
+    آخر تحديث: 2026-08-26 · هذه الصفحة تُغطّي كل صفحات النظام بلا استثناء.
+  </footer>
+</div>
+
+<!-- أدوات النظام (خفيفة): حارس الصور للسياسة + الإعداد — بترقيم إصدار لمنع الكاش القديم -->
+<script src="gmt-image-guard.js?v=20260926"></script>
+<script src="gmt-config.js?v=20260926"></script>
+  <script src="gmt-brand.js?v=20260926"></script>
+<!-- (2026-08-26) التحميل الأوّلي الكامل عند أول فتح: البيانات + الصور تُنزَّل مرّة واحدة
+     مع شاشة تقدّم مرئية، ثم يعمل النظام من الجهاز ويخفّ الضغط على القاعدة.
+     gmt-core يوفّر GMTCache وهو شرط لازم لعمل GMTWarmup. -->
+<script src="gmt-core.js?v=20260926"></script>
+<script src="gmt-warmup.js?v=20260926"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   الصفحة الرئيسية — مصدر واحد للحقيقة: كل صفحة في المصفوفة أدناه.
+   «بدون استثناء» = عدد العناصر هنا يساوي عدد ملفات .html في المستودع (٣٢).
+   db: القاعدة التي تلمسها الصفحة (لصفحات البيانات فقط) — MAIN·STORE·SITE·WARRANTY
+   ═══════════════════════════════════════════════════════════════════════ */
+const GROUPS = [
+  { name:'🧭 التشغيل اليومي', items:[
+    {f:'orders.html',    ic:'📋', t:'الأوردرات',      d:'طلبات الزبائن · الشحن · التحصيل', db:'MAIN', k:'اوردرات طلبات شحن توصيل تحصيل'},
+    {f:'pos.html',       ic:'🛒', t:'نقطة البيع',     d:'الكاشير · الفوترة · البيع المباشر', db:'MAIN', k:'نقطة بيع كاشير فاتورة صندوق'},
+    {f:'guarantee.html', ic:'🛡️', t:'إنشاء كفالة',    d:'إصدار كفالة كانون رسمية', db:'WARRANTY', k:'كفالة ضمان كانون اصدار'},
+    {f:'deal.html',      ic:'📄', t:'أداة العقود',    d:'توظيف · عهدة · تسليم · تدريب', k:'عقود عقد توظيف عهدة تسليم تدريب'},
+    {f:'hiring.html',    ic:'🧑‍💼', t:'بوابة التوظيف',  d:'استقبال طلبات التوظيف والتقييم · تُحفظ في القاعدة', db:'MAIN', k:'توظيف وظيفة طلب تقديم سيرة ذاتية cv hiring'},
+    {f:'labels.html',    ic:'🏷️', t:'طابعة الملصقات', d:'طباعة ملصقات الباركود والأسعار', k:'ملصقات ملصق باركود طباعة سعر'},
+  ]},
+  { name:'👑 الإدارة والإشراف', items:[
+    {f:'inventory.html', ic:'📦', t:'الجرد والمخزون', d:'المخزون · المنتجات · النقل بين الفروع', db:'MAIN', k:'جرد مخزون بضاعة منتجات نقل فروع باركود'},
+    {f:'purchase.html',  ic:'🏭', t:'المشتريات',      d:'الشراء · الموردون · استيراد Excel', db:'MAIN', k:'مشتريات شراء موردين فواتير اكسل استيراد'},
+    {f:'sales_log.html', ic:'📈', t:'سجل المبيعات والأرباح', d:'الأكثر مبيعاً · الربح · من كل الأفرع', db:'MAIN', k:'سجل مبيعات ارباح اكثر مبيعا ربح هامش'},
+    {f:'admin_pos.html',       ic:'🧮', t:'أدمن نقاط البيع', d:'محاسبة · عمولات · كوبونات · مصاريف', db:'MAIN', k:'ادمن نقاط بيع محاسبة عمولات كوبونات مصاريف صندوق'},
+    {f:'admin_store.html',     ic:'🏪', t:'أدمن المتجر',    d:'منتجات وطلبات المتجر الإلكتروني', db:'STORE', k:'ادمن متجر منتجات طلبات عروض'},
+    {f:'admin_site.html',      ic:'🌐', t:'أدمن الموقع',    d:'نصوص · وكلاء · أخبار · بانرات', db:'SITE', k:'ادمن موقع اعدادات وكلاء اخبار بانر'},
+    {f:'guarantee_admin.html', ic:'🗂️', t:'إدارة الكفالات', d:'عرض وتعديل الكفالات الصادرة', db:'WARRANTY', k:'ادارة كفالات ضمان'},
+    {f:'bridge.html',          ic:'🔗', t:'الجسر',          d:'ربط الجرد بالمتجر ومزامنته', k:'جسر ربط مزامنة جرد متجر bridge'},
+    {f:'admin_sovereign.html', ic:'♛', t:'الأدمن الكلي',    d:'لوحة التحكم السيادية العليا', k:'ادمن كلي سيادي تحكم sovereign'},
+    {f:'weekly_report.html',   ic:'📊', t:'التقرير الأسبوعي', d:'ملخّص الأداء الأسبوعي', k:'تقرير اسبوعي احصاء اداء'},
+    {f:'backup.html',          ic:'💾', t:'النسخ الاحتياطي', d:'تصدير واستعادة بيانات النظام', k:'نسخ احتياطي باكب استعادة تصدير backup'},
+    {f:'الأمان_والمستخدمون.html', ic:'🔐', t:'الأمان والمستخدمون', d:'كل كلمات السر بلا استثناء · إضافة وإزالة المستخدمين وتغيير أسمائهم وكلماتهم', k:'كلمات سر باسورد امان password مستخدمين موظفين حسابات users سيادية'},
+    {f:'passwords.html',       ic:'🔑', t:'كلمات السر (القديمة)',     d:'مفاتيح gmt_settings الخام — الأداة الجديدة تغنيك عنها', k:'كلمات سر باسورد password settings'},
+  ]},
+  { name:'🛍️ واجهات الزبون', items:[
+    {f:'store.html',       ic:'🛍️', t:'المتجر الإلكتروني', d:'تسوّق المنتجات والطلب أونلاين', db:'STORE', k:'متجر تسوق شراء اونلاين store'},
+    {f:'site.html',        ic:'🌐', t:'الموقع الرسمي',     d:'موقع كانون الرسمي في سوريا', db:'SITE', k:'موقع كانون سوريا site'},
+    {f:'search.html',      ic:'🔍', t:'البحث عن الكفالة',  d:'تحقّق الزبون من كفالته', db:'WARRANTY', k:'بحث كفالة تحقق زبون search'},
+    {f:'track_order.html', ic:'🚚', t:'تتبع الشحنة',       d:'تتبّع حالة الطلب والشحن', k:'تتبع شحنة طلب track'},
+  ]},
+  { name:'🔬 الفحص والتشخيص', items:[
+    {f:'checks.html',            ic:'🔬', t:'مركز الفحوصات',      d:'فحص شامل لكل القواعد', k:'فحص فحوصات تشخيص قواعد checks'},
+    {f:'check.html',             ic:'🩺', t:'تشخيص سريع',        d:'فحص اتصال سريع', k:'تشخيص فحص سريع check'},
+    {f:'central_inspector.html', ic:'🛰️', t:'مركز الفحص الشامل', d:'فاحص مركزي عميق للنظام', k:'فحص مركزي عميق inspector'},
+    {f:'test_board.html',        ic:'🧪', t:'لوحة التجريب',      d:'تجربة الأدوات المُنجَزة', k:'تجريب اختبار ادوات test'},
+    {f:'guard_bots.html',        ic:'🤖', t:'بوتات الحماية',     d:'مراقبة الأنماط الخطرة', k:'بوت بوتات حماية مراقبة guard'},
+    {f:'guard_bots_19.html',     ic:'🤖', t:'بوتات الحماية (19)', d:'نسخة موسّعة من البوتات', k:'بوت بوتات حماية 19 guard'},
+  ]},
+  { name:'📚 التوثيق والخطط', items:[
+    {f:'center.html',      ic:'📚', t:'مركز المعرفة',     d:'كل شيء عن النظام في مكان واحد', k:'مركز معرفة توثيق دليل center'},
+    {f:'full_docs.html',   ic:'📘', t:'التوثيق الشامل',   d:'مرجع تقني كامل', k:'توثيق مرجع تقني docs'},
+    {f:'user_guide.html',  ic:'📖', t:'دليل المستخدم',    d:'شرح النظام زرّاً بزرّ', k:'دليل مستخدم شرح guide'},
+    {f:'deploy_plan.html', ic:'🚀', t:'خطة النشر',        d:'خطوات النشر الشاملة', k:'نشر خطة رفع deploy'},
+    {f:'plan.html',        ic:'🗓️', t:'خطة نشر (قديمة)',  d:'جلسة 2026-08-18', k:'خطة نشر قديمة plan'},
+    {f:'index.html',       ic:'🚪', t:'البوابة القديمة',  d:'البوابة الأصلية بالأدوار', k:'بوابة قديمة بورتال index'},
+  ]},
+  { name:'🗄️ قواعد البيانات — SQL', items:[
+    {f:'_SQL_فحص_الدوال_الذرية.sql', ic:'🔎', t:'فحص الدوال الذرّية', d:'⚠️ شغّله أولاً — قراءة فقط', db:'MAIN', k:'sql فحص دوال ذرية rpc'},
+    {f:'_SQL_فحص_التحصيلات_المكررة.sql', ic:'🔎', t:'فحص التحصيلات المكرّرة', d:'قراءة فقط — تكرار وأثر الصندوق', db:'MAIN', k:'sql فحص تحصيل مكرر'},
+    {f:'_SQL_فحص_فواتير_النقل_العالقة.sql', ic:'🔎', t:'فحص فواتير النقل العالقة', d:'قراءة فقط — عالقة على الاستلام', db:'MAIN', k:'sql فحص نقل عالقة'},
+    {f:'_SQL_1️⃣7️⃣_سجل_التدقيق.sql', ic:'🗄️', t:'SQL 17 — سجل التدقيق', d:'audit_log للمساءلة', db:'MAIN', k:'sql 17 تدقيق مساءلة audit'},
+    {f:'_SQL_1️⃣8️⃣_ختم_الفواتير_التاريخية.sql', ic:'🗄️', t:'SQL 18 — ختم الفواتير', d:'يمنع مضاعفة الترحيل القديم', db:'MAIN', k:'sql 18 ختم فواتير تاريخية'},
+    {f:'_SQL_1️⃣9️⃣_جدول_العرابين.sql', ic:'🗄️', t:'SQL 19 — العرابين', d:'gmt_reservations', db:'MAIN', k:'sql 19 عربون حجز reservations'},
+    {f:'_SQL_2️⃣0️⃣_تسوية_النقل.sql', ic:'🗄️', t:'SQL 20 — تسوية النقل', d:'تصحيح النقل بين الفروع', db:'MAIN', k:'sql 20 تسوية نقل'},
+    {f:'_SQL_2️⃣1️⃣_تسوية_النقل_السابق.sql', ic:'🗄️', t:'SQL 21 — تسوية النقل السابق', d:'معالجة نقل قديم', db:'MAIN', k:'sql 21 تسوية نقل سابق'},
+    {f:'_SQL_2️⃣2️⃣_حماية_الكوبونات.sql', ic:'🗄️', t:'SQL 22 — حماية الكوبونات', d:'منع الخصم المزدوج', db:'MAIN', k:'sql 22 كوبونات حماية'},
+    {f:'_SQL_2️⃣3️⃣_جداول_الموقع.sql', ic:'🗄️', t:'SQL 23 — جداول الموقع', d:'site_settings + agents', db:'SITE', k:'sql 23 موقع جداول'},
+    {f:'_SQL_2️⃣4️⃣_تفرّد_طلبات_المتجر.sql', ic:'🗄️', t:'SQL 24 — تفرّد الطلبات', d:'منع الطلب المزدوج', db:'MAIN', k:'sql 24 متجر تفرد'},
+    {f:'_SQL_2️⃣5️⃣_تقفيل_يومي.sql', ic:'🗄️', t:'SQL 25 — التقفيل اليومي', d:'جدول gmt_daily_closes', db:'MAIN', k:'sql 25 تقفيل يومي'},
+    {f:'_SQL_2️⃣6️⃣_منع_التحصيل_المزدوج.sql', ic:'🗄️', t:'SQL 26 — منع التحصيل المزدوج', d:'فهرس فريد للتحصيل', db:'MAIN', k:'sql 26 تحصيل مزدوج'},
+    {f:'_SQL_2️⃣7️⃣_الدوال_الذرية_للمخزون.sql', ic:'🗄️', t:'SQL 27 — الدوال الذرّية', d:'add/deduct_branch_stock', db:'MAIN', k:'sql 27 دوال مخزون ذرية'},
+    {f:'_SQL_2️⃣8️⃣_تفرد_ربط_الجسر.sql', ic:'🗄️', t:'SQL 28 — تفرّد ربط الجسر', d:'منع تكرار ربط منتج بالمتجر', db:'STORE', k:'sql 28 جسر تفرد'},
+    {f:'_SQL_3️⃣3️⃣_مبلغ_التحصيل.sql', ic:'🗄️', t:'SQL 33 — مبلغ التحصيل', d:'الطلبات المدفوعة جزئياً (شام كاش)', db:'MAIN', k:'sql 33 تحصيل شام كاش'},
+    {f:'_SQL_3️⃣2️⃣_حالات_الأوردر_الكاملة.sql', ic:'🗄️', t:'SQL 32 — حالات الأوردر', d:'يقبل «محضّرة» + رقم طلب المتجر', db:'MAIN', k:'sql 32 حالات اوردر prepared تتبع'},
+    {f:'_SQL_3️⃣1️⃣_فحص_سعر_الصرف_القديم.sql', ic:'🔎', t:'SQL 31 — سعر الصرف القديم', d:'قراءة فقط — سجلّات بلا سعر محفوظ', db:'MAIN', k:'sql 31 سعر صرف قديم ليرة جديدة'},
+    {f:'_SQL_3️⃣0️⃣_تنظيف_كسور_المتبقي.sql', ic:'🗄️', t:'SQL 30 — كسور المتبقّي', d:'زبائن يظهرون مدينين وهمياً', db:'MAIN', k:'sql 30 كسور متبقي عائم تنظيف'},
+    {f:'_SQL_2️⃣9️⃣_صورة_الإيصال_المؤقتة.sql', ic:'🗄️', t:'SQL 29 — صورة الإيصال', d:'عرض الإيصال داخل الأوردرات', db:'MAIN', k:'sql 29 ايصال صورة'},
+    {f:'_SQL_3️⃣4️⃣_تتبع_التبليغات.sql', ic:'🗄️', t:'SQL 34 — تتبّع التبليغات', d:'علامات «تمّ تبليغه» كي لا يُبلَّغ الزبون مرّتين', db:'MAIN', k:'sql 34 تبليغ اشعار صحين واتساب'},
+    {f:'_SQL_3️⃣5️⃣_طلبات_التوظيف.sql', ic:'🗄️', t:'SQL 35 — طلبات التوظيف', d:'كانت تُحفظ في متصفّح المتقدّم فقط فلا تصلنا', db:'MAIN', k:'sql 35 توظيف طلبات hiring'},
+    {f:'_SQL_3️⃣6️⃣_الدفع_الخارجي.sql', ic:'🗄️', t:'SQL 36 — الدفع الخارجي', d:'🔴 يُصلح العجز الوهمي على الكاشير (شام كاش/حوالة)', db:'MAIN', k:'sql 36 دفع خارجي شام كاش عجز وهمي صندوق'},
+    {f:'_SQL_3️⃣7️⃣_مواصفات_وتوافقيات_المنتجات.sql', ic:'🗄️', t:'SQL 37 — المواصفات والتوافقيات', d:'🆕 «هود العدسة 85» تجد ET-65 III المخزَّن ككود', db:'MAIN', k:'sql 37 مواصفات توافقيات هود كفر بحث specs'},
+    {f:'_SQL_3️⃣8️⃣_محادثات_المتجر.sql', ic:'🗄️', t:'SQL 38 — محادثات المتجر', d:'🆕 ⚠️ على قاعدة المتجر لا الرئيسية — طلبات التواصل وأسلوب الردود', db:'STORE', k:'sql 38 متجر محادثات مساعد شكاوى shop_chats'},
+  ]},
+  { name:'🛠️ أدوات وبنية النظام', items:[
+    {f:'خريطة_الطريق.html', ic:'🗺️', t:'خريطة الطريق', d:'🆕 ما لم يكتمل · اقتراحات التطوير · الكيبورد والجسور وستايل المتجر', k:'خريطة طريق خطة مستقبل اقتراحات كيبورد جسور'},
+    {f:'شو_الجديد.html', ic:'🆕', t:'شو الجديد', d:'🆕 كل التحديثات في صفحة واحدة — ونافذة في كل أداة', k:'شو الجديد تحديثات جديد اخبار'},
+    {f:'تجهيز_النشر.py', ic:'📦', t:'تجهيز النشر', d:'🆕 يفصل ما يُرفَع على الموقع عمّا يبقى عندك', k:'نشر تجهيز فصل ملفات رفع'},
+    {f:'gmt-whatsnew.js', ic:'🔔', t:'محرّك «شو الجديد»', d:'🆕 سجلّ التحديثات — مصدر واحد للنوافذ وللصفحة', k:'شو الجديد محرك سجل تحديثات'},
+    {f:'أماكن_الوصول.html', ic:'📍', t:'أماكن الوصول', d:'🆕 166 مكتب شحن بالبحث والاتصال والتتبّع — صفحة كاملة لا نافذة', k:'اماكن وصول مكاتب شحن عناوين ارقام تتبع'},
+    {f:'_اقرأني_أولاً_هذه_الحزمة.md', ic:'⭐', t:'اقرأني أوّلاً — هذه الحزمة', d:'🆕 خريطة كل شيء + الثلاثة الأهمّ التي تنتظرك', k:'اقرأني حزمة خريطة بداية ابدأ'},
+    {f:'checkblocks.py', ic:'✅', t:'فحص كتل السكربت', d:'يفحص كل كتلة <script> على حدة — الفحص الأول دائماً', k:'فحص صياغة كتل سكربت checkblocks'},
+    {f:'gmt-brand.js', ic:'🎨', t:'الهوية البصرية', d:'الشعار والألوان — مصدر واحد للمطبوعات والصفحات', k:'هوية شعار لوغو الوان brand'},
+    {f:'gmt-nofab.js', ic:'🚫', t:'حارس الأزرار العائمة', d:'يمنع تكدّس الأزرار العائمة على الصفحات', k:'حارس ازرار عائمة nofab'},
+    {f:'تفعيل_عقل_النظام.html', ic:'🧠', t:'تفعيل عقل النظام', d:'نشر الوسيط — 10 دقائق مرّة واحدة', k:'عقل نظام تفعيل وسيط ذكاء اصطناعي'},
+    {f:'المراجعة_المالية_الشاملة.html', ic:'💰', t:'المراجعة المالية الشاملة', d:'أثر كل ما أضفناه على الصندوق والمحاسبة', k:'مراجعة مالية صندوق تسريبات عجز'},
+    {f:'دراسة_كيبورد_المبيعات.html', ic:'⌨️', t:'دراسة كيبورد المبيعات', d:'الطريق من الفقاعة إلى كيبورد كامل', k:'كيبورد مبيعات دراسة فقاعة'},
+    {f:'_سجل_جلسة_2026-09-26_المرحلة_الأولى_الأوردرات.md', ic:'📓', t:'سجل الجلسة أ — الأوردرات', d:'المرحلة الأولى', k:'سجل جلسة اوردرات'},
+    {f:'_سجل_جلسة_2026-09-26_ب_الهوية_والمرحلة_الثانية.md', ic:'📓', t:'سجل الجلسة ب — الهوية', d:'الشعار والمرحلة الثانية', k:'سجل جلسة هوية شعار'},
+    {f:'_سجل_جلسة_2026-09-26_ج_المكاتب_والتحصيل_والتفريغ.md', ic:'📓', t:'سجل الجلسة ج — المكاتب', d:'المكاتب والتحصيل والتفريغ', k:'سجل جلسة مكاتب تحصيل تفريغ'},
+    {f:'_سجل_جلسة_2026-09-26_د_الفقاعة_والأمان_والمساعد.md', ic:'📓', t:'سجل الجلسة د — الفقاعة والأمان', d:'🆕 تسريب صفحات الزبون · العدد · التوافقيات · المساعد · الفقاعة', k:'سجل جلسة فقاعة امان مساعد عدد توافقيات'},
+    {f:'gmt-suggest.js', ic:'🎯', t:'محرّك الاقتراح المشترك', d:'🆕 المصدر الواحد: نقحرة · فواصل · وحدات · الكميّة («عدد اثنين»)', k:'اقتراح مطابقة منتجات نقحرة كمية عدد suggest'},
+    {f:'gmt-enrich.js', ic:'🧠', t:'إثراء المنتجات', d:'🆕 مواصفات وتوافقيات بالذكاء الاصطناعي — تخضع لمراجعتك', k:'اثراء مواصفات توافقيات هود ذكاء اصطناعي enrich'},
+    {f:'gmt-shop-assistant.js', ic:'💬', t:'مساعد المتجر', d:'🆕 للزبائن — يرشّح منتجاتنا ويحوّل لموظّف', k:'مساعد متجر زبائن شكاوى محادثة shop assistant'},
+    {f:'_edge_function_gmt-shop.ts', ic:'🔐', t:'وسيط مساعد المتجر', d:'🆕 تعليمات الأسلوب في الخادم + حدّ استهلاك لكل زائر', k:'وسيط edge function متجر مساعد rate limit'},
+    {f:'دليل_التوافقيات_والمواصفات.html', ic:'🔧', t:'دليل التوافقيات', d:'🆕 الهودات والأغطية والبطاريات — وكود الهود لا يُحسب من القطر', k:'توافقيات هود غطاء كفر بطارية فلاش دليل'},
+    {f:'توليد_مكاتب_الفقاعة.py', ic:'📤', t:'توليد مكاتب الفقاعة', d:'🆕 يُصدّر شبكة المكاتب لتطبيق أندرويد — مصدر واحد', k:'توليد مكاتب فقاعة اندرويد offices json'},
+    {f:'توليد_معاينة_مستقلة.py', ic:'📄', t:'توليد معاينة مستقلّة', d:'🆕 ملفّ واحد يعمل بلا خادم ولا إنترنت', k:'معاينة مستقلة توليد ملف واحد offline'},
+    {f:'توليد_الأصول_الناقصة.py', ic:'🖼️', t:'توليد الأصول الناقصة', d:'🆕 يستخرج الصور المفقودة من الكود ويُصنّفها بالخطورة', k:'اصول ناقصة صور مفقودة ناشر توليد'},
+    {f:'orders_معاينة_مستقلة.html', ic:'👁️', t:'معاينة الأوردرات', d:'نسخة مستقلّة للمراجعة — لا تُنشر', k:'معاينة اوردرات مستقلة'},
+    {f:'مسحة_المختفيات.py', ic:'🕵️', t:'مسحة المختفيات', d:'كاشف جثث الحذف والمراجع المفقودة', k:'مسحة مختفيات فحص python اداة'},
+    {f:'كاشف_المراجع_اليتيمة.py', ic:'🧩', t:'كاشف المراجع اليتيمة', d:'🆕 يصطاد أعطال وقت التشغيل التي يمرّرها الفحص النحوي', k:'كاشف مراجع يتيمة runtime orphan اداة'},
+    {f:'gmt-shipping-offices.js', ic:'📍', t:'مكاتب شركات الشحن', d:'36 مكتب للمفتي — اقتراح عند كتابة المدينة', k:'مكاتب شحن مفتي عناوين فروع'},
+    {f:'gmt-guide-updates.js', ic:'📘', t:'معرفة الميزات الجديدة', d:'⚠️ أضِف كل ميزة جديدة هنا — يقرأه العقل', k:'معرفة ميزات جديدة guide updates'},
+    {f:'gmt-brain.js', ic:'🧠', t:'عقل النظام', d:'المساعد الذكي (Claude) — داخلي', k:'عقل ذكاء اصطناعي brain مساعد'},
+    {f:'gmt-selfcheck.js', ic:'🩺', t:'الفاحص الذاتي', d:'فحص آلي يومي — قراءة فقط', k:'فاحص ذاتي selfcheck'},
+    {f:'gmt-core.js', ic:'⚙️', t:'النواة', d:'GMTCash + 19 قاعدة مالك + الكاش', k:'نواة core صندوق قواعد'},
+    {f:'gmt-sync.js', ic:'📴', t:'المزامنة بلا إنترنت', d:'طابور الكتابة عند الانقطاع', k:'مزامنة اوفلاين sync'},
+    {f:'gmt-warmup.js', ic:'🚀', t:'التحميل الأوّلي', d:'تنزيل البيانات والصور مرة واحدة', k:'تحميل اولي warmup'},
+    {f:'gmt-hints.js', ic:'❔', t:'شرح الأزرار', d:'تلميح وجولة على الزر نفسه', k:'شرح ازرار hints تلميح'},
+    {f:'gmt-pwa.js', ic:'📱', t:'التطبيق (PWA)', d:'التثبيت والتحديث', k:'تطبيق pwa تثبيت'},
+    {f:'sw.js', ic:'🛰️', t:'عامل الخدمة', d:'⚠️ غيّر VERSION عند كل نشر', k:'عامل خدمة service worker sw'},
+    {f:'_edge_function_gmt-brain.ts', ic:'🔐', t:'وسيط عقل النظام', d:'Edge Function — المفتاح يبقى بالخادم', k:'وسيط edge function مفتاح'},
+    {f:'manifest.json', ic:'📄', t:'بيان التطبيق', d:'أيقونات ونقطة البدء', k:'manifest بيان تطبيق'},
+    {f:'gmt-config.js', ic:'🔑', t:'إعداد القواعد', d:'GMT_DB — روابط ومفاتيح القواعد الأربع', k:'اعداد config قواعد مفاتيح db'},
+    {f:'gmt-staff.js', ic:'🛡️', t:'حُرّاس الموظفين', d:'guardDelete · guardTransfer · حماية العمليات', k:'حراس staff حماية حذف ترحيل'},
+    {f:'gmt-deep-inspector.js', ic:'🔬', t:'الفاحص العميق', d:'clickAll — يكبس كل زر ويرصد الأعطال', k:'فاحص عميق inspector clickall'},
+    {f:'gmt-image-guard.js', ic:'🖼️', t:'حارس الصور', d:'يمنع كشف روابط Supabase في الصور', k:'حارس صور image guard'},
+    {f:'gmt-updater.js', ic:'🔄', t:'المحدّث', d:'ترقيم الإصدار ومنع الكاش القديم', k:'محدث updater اصدار كاش'},
+    {f:'gmt-training.js', ic:'🎓', t:'التدريب (توافق)', d:'شاهدة توافق — البديل GMTGuide', k:'تدريب training توافق'},
+    {f:'_tailwind.config.js', ic:'🎛️', t:'إعداد Tailwind الموحّد', d:'⚠️ منه يُبنى lib/tailwind.css — عدّل هنا', k:'اعداد tailwind config الوان انيميشن'},
+    {f:'lib/tailwind.css', ic:'🎨', t:'التنسيق المبنيّ', d:'⚠️ أعد بناءه بعد أي تعديل واجهة', k:'تنسيق tailwind css بناء'},
+  ]},
+  { name:'📘 أدلة الصفحات (زرّاً بزرّ)', items:[
+    {f:'gmt-guide-orders.js', ic:'📋', t:'دليل الأوردرات', d:'شرح صفحة الأوردرات', k:'دليل اوردرات guide'},
+    {f:'gmt-guide-pos.js', ic:'🛒', t:'دليل نقطة البيع', d:'شرح الكاشير', k:'دليل نقطة بيع pos guide'},
+    {f:'gmt-guide-inventory.js', ic:'📦', t:'دليل الجرد', d:'شرح المخزون', k:'دليل جرد inventory guide'},
+    {f:'gmt-guide-purchases.js', ic:'🏭', t:'دليل المشتريات', d:'شرح الشراء والاستيراد', k:'دليل مشتريات purchases guide'},
+    {f:'gmt-guide-admin.js', ic:'👑', t:'دليل الإدارة', d:'شرح أدمن نقاط البيع', k:'دليل ادارة admin guide'},
+    {f:'gmt-guide-bridge.js', ic:'🔗', t:'دليل الجسر', d:'شرح الربط مع المتجر', k:'دليل جسر bridge guide'},
+    {f:'gmt-guide-labels.js', ic:'🏷️', t:'دليل الملصقات', d:'شرح طباعة الباركود', k:'دليل ملصقات labels guide'},
+    {f:'gmt-guide-backup.js', ic:'💾', t:'دليل النسخ الاحتياطي', d:'شرح التصدير والاستعادة', k:'دليل نسخ احتياطي backup guide'},
+    {f:'gmt-guide-sovereign.js', ic:'♛', t:'دليل الأدمن السيادي', d:'شرح اللوحة العليا', k:'دليل سيادي sovereign guide'},
+  ]},
+  { name:'📖 الأدلة والتقارير', items:[
+    {f:'🧭_دليل_بناء_الأنظمة_مع_الذكاء_الاصطناعي.md', ic:'🧭', t:'دليل بناء الأنظمة مع الذكاء الاصطناعي', d:'⭐ الدستور والأنماط والبوتات وطريقة عملنا — لأي مشروع', k:'منهجية دليل دستور انماط بوتات تصيد طريقة عمل'},
+    {f:'📕_الكتاب_الكامل.md', ic:'📕', t:'الكتاب الكامل', d:'⭐⭐ كل شيء في ملف واحد — ابدأ من هنا', k:'كتاب كامل مرجع شامل كلشي'},
+    {f:'_فهرس_التسليم_النهائي.md', ic:'📦', t:'فهرس التسليم النهائي', d:'⭐ خريطة كل شيء — ابدأ من هنا', k:'فهرس تسليم نهائي خريطة'},
+    {f:'_رسالة_النشر_النهائية.md', ic:'📣', t:'رسالة النشر النهائية', d:'الخطوات بالترتيب + ما تفحصه', k:'رسالة نشر نهائية'},
+    {f:'_دليل_النشر_بالترتيب.md', ic:'🚀', t:'دليل النشر بالترتيب', d:'خطوات النشر الآمنة — ابدأ منه', k:'دليل نشر ترتيب deploy'},
+    {f:'_فحص_يدوي_موحّد_لكل_النظام.md', ic:'✅', t:'الفحص اليدوي الموحّد', d:'قائمة اختبار بعد النشر', k:'فحص يدوي اختبار checklist'},
+    {f:'_تفعيل_عقل_النظام.md', ic:'🧠', t:'تفعيل عقل النظام', d:'🆕 المساعد الذكي الداخلي — خطوات التفعيل', k:'عقل نظام ذكاء اصطناعي بوت مساعد brain'},
+    {f:'_سجل_التحديثات_الكامل.md', ic:'📜', t:'سجل التحديثات الكامل', d:'كل ما أُنجز مرتّباً بالموضوع', k:'سجل تحديثات كامل انجاز'},
+    {f:'_الأصول_الناقصة_للناشر.md', ic:'🖼️', t:'الأصول الناقصة', d:'⚠️ 12 صورة يرفعها الناشر', k:'اصول صور ناقصة ناشر لوجو'},
+    {f:'_سجل_السلوكيات_والإضافات.md', ic:'📖', t:'سجل السلوكيات والإضافات', d:'⭐ المرجع الدائم — كل قرار وكل إضافة', k:'سجل سلوكيات اضافات مرجع قرارات'},
+    {f:'_رؤية_المشروع_الكاملة.md', ic:'🗺️', t:'رؤية المشروع الكاملة', d:'خريطة النظام والحالة', k:'رؤية خريطة مشروع'},
+    {f:'_دستور_إضافة_2026-08-22.md', ic:'📜', t:'الدستور', d:'القواعد والأنماط P1–P17', k:'دستور قواعد انماط'},
+    {f:'_سجل_المشروع_الكامل.md', ic:'📚', t:'سجل المشروع الكامل', d:'التاريخ من البداية', k:'سجل مشروع تاريخ'},
+    {f:'_اقرأني_أولاً.md', ic:'📌', t:'اقرأني أولاً', d:'المدخل الأصلي للمشروع', k:'اقرأني اولا مدخل readme'},
+    {f:'_ما_بقي_القائمة_الشاملة.md', ic:'📋', t:'ما بقي — القائمة الشاملة', d:'المتبقّي والمؤجَّل ولماذا', k:'ما بقي متبقي مؤجل قائمة'},
+    {f:'_التدقيق_النهائي_الشامل.md', ic:'🔍', t:'التدقيق النهائي الشامل', d:'14 فحصاً على كل ملف', k:'تدقيق نهائي شامل فحص'},
+    {f:'_الخطة_الرئيسية.md', ic:'🗺️', t:'الخطة الرئيسية', d:'خطة المشروع الأصلية', k:'خطة رئيسية'},
+    {f:'_الخطة_للجلسة_القادمة.md', ic:'📆', t:'خطة الجلسة القادمة', d:'المراحل ①–⑦', k:'خطة جلسة قادمة مراحل'},
+    {f:'_قائمة_النشر_الكاملة.md', ic:'📤', t:'قائمة النشر الكاملة', d:'ما ينقص الموقع بأولويات', k:'قائمة نشر كاملة'},
+    {f:'_تنسيق_ملف_Excel.md', ic:'📊', t:'تنسيق ملف Excel', d:'شكل ملف المورد والاستيراد', k:'اكسل excel تنسيق استيراد مورد'},
+    {f:'_سجل_البلاغات_2026-08-22.md', ic:'🐞', t:'سجل البلاغات', d:'بلاغات المالك B1–B22', k:'بلاغات سجل اخطاء'},
+    {f:'_إعادة_التحقق_من_سجل_البلاغات.md', ic:'🔁', t:'إعادة التحقق من البلاغات', d:'فحص البلاغات القديمة بالكود', k:'اعادة تحقق بلاغات'},
+    {f:'_تحقق_من_طلبات_23-08.md', ic:'✔️', t:'تحقق من طلبات 23-08', d:'حالة كل طلب سابق', k:'تحقق طلبات'},
+    {f:'_فحص_دستوري_الأقسام_المنقولة_2026-08-26.md', ic:'📜', t:'فحص دستوري للأقسام المنقولة', d:'المتجر · الموقع · الجسر', k:'فحص دستوري اقسام منقولة'},
+    {f:'_سجل_إنجاز_نقطة_البيع.md', ic:'🧮', t:'سجل إنجاز نقطة البيع', d:'تاريخ تطوير الكاشير', k:'سجل انجاز نقطة بيع'},
+    {f:'_طلبات_وخطة_نقطة_البيع.md', ic:'📝', t:'طلبات وخطة نقطة البيع', d:'المطلوب من الكاشير', k:'طلبات خطة نقطة بيع'},
+    {f:'_فحص_نقطة_البيع_2026-08-23.md', ic:'🔬', t:'فحص نقطة البيع', d:'تقرير فحص الكاشير', k:'فحص نقطة بيع'},
+    {f:'_فحص_يدوي_نقطة_البيع.md', ic:'✅', t:'فحص يدوي — نقطة البيع', d:'قائمة اختبار الكاشير', k:'فحص يدوي نقطة بيع'},
+    {f:'_فحص_يدوي_2026-08-23.md', ic:'✅', t:'فحص يدوي — 23/08', d:'قائمة اختبار سابقة', k:'فحص يدوي'},
+    {f:'_اختبار_قبول_القسم_الأول.md', ic:'🧪', t:'اختبار قبول القسم الأول', d:'معايير القبول', k:'اختبار قبول'},
+    {f:'_طلبات_النقل_بين_الفروع.md', ic:'🔄', t:'طلبات النقل بين الفروع', d:'مواصفات النقل', k:'نقل فروع طلبات'},
+    {f:'_تحقيق_مشكلة_الصور.md', ic:'🖼️', t:'تحقيق مشكلة الصور', d:'قصة صور Excel وحلّها', k:'تحقيق صور اكسل'},
+    {f:'_سجل_جلسة_2026-08-26.md', ic:'📅', t:'سجل جلسة 26-08', d:'تفاصيل الجلسة', k:'سجل جلسة'},
+    {f:'_كلمة_السر_السيادية.md', ic:'🔐', t:'كلمة السر السيادية', d:'⚠️ وصول الأدمن الأعلى', k:'كلمة سر سيادية باسورد'},
+    {f:'_أنماط_وقعت_فيها.md', ic:'🪞', t:'أنماط وقعتُ فيها', d:'⭐ سجلّ صادق لأخطاء الإصلاح — كي لا تتكرّر', k:'انماط اخطاء وقعت فيها دروس مرآة'},
+    {f:'_الدراسة_الشاملة_للأنظمة_التسعة.md', ic:'🔬', t:'الدراسة الشاملة للأنظمة التسعة', d:'⭐ الجسر · المتجر · الموقع · الكفالة · العقل · المعرفة · الفاحص · البوتات', k:'دراسة شاملة جسر متجر موقع كفالة عقل معرفة'},
+    {f:'_الدراسة_الشاملة_للأنظمة_الأربعة.md', ic:'🔬', t:'الدراسة الشاملة للأنظمة الأربعة', d:'⭐ الأوردرات · نقطة البيع · الأدمن · الجرد · المشتريات', k:'دراسة شاملة انظمة كود ميت ناقص تطوير'},
+    {f:'_دراسة_وحدة_01_الأوردرات.md', ic:'🔍', t:'دراسة: الأوردرات', d:'أعطال وتحسينات الوحدة', k:'دراسة اوردرات'},
+    {f:'_دراسة_وحدة_02_نقطة_البيع.md', ic:'🔍', t:'دراسة: نقطة البيع', d:'أعطال وتحسينات الوحدة', k:'دراسة نقطة بيع'},
+    {f:'_دراسة_وحدة_03_04_الجرد_والمتجر.md', ic:'🔍', t:'دراسة: الجرد والمتجر', d:'أعطال وتحسينات الوحدتين', k:'دراسة جرد متجر'},
+    {f:'_دراسة_وحدات_05_08_الموقع_الكفالات_الإدارة_العقود.md', ic:'🔍', t:'دراسة: الموقع والكفالات والإدارة', d:'أعطال وتحسينات', k:'دراسة موقع كفالات ادارة عقود'},
+    {f:'_تقفيل_يومي_ومطابقة_الصندوق_المواصفات.md', ic:'🏦', t:'مواصفات الصندوق والتقفيل', d:'المعادلة الموحّدة والتفاصيل', k:'صندوق تقفيل مواصفات'},
+    {f:'_سجل_تحديثات_نقطة_البيع_الموحّد.md', ic:'📒', t:'سجل تحديثات نقطة البيع', d:'53 تعديلاً مؤرّخاً', k:'سجل تحديثات نقطة بيع'},
+    {f:'_الإغلاق_النهائي_وفحص_شامل_2026-08-26.md', ic:'🏁', t:'تقرير الإغلاق النهائي', d:'نتائج الفحص الشامل', k:'اغلاق نهائي فحص شامل'},
+  ]},
+];
+
+const board = document.getElementById('board');
+const ALL = [];
+GROUPS.forEach((g, gi) => {
+  const sec = document.createElement('div'); sec.className='section'; sec.dataset.gi=gi;
+  sec.innerHTML = `<h2>${g.name} <span class="cnt">${g.items.length}</span></h2>`;
+  const grid = document.createElement('div'); grid.className='grid';
+  g.items.forEach(it => {
+    const a = document.createElement('a');
+    a.className='card'; a.href=it.f; a.dataset.f=it.f;
+    a.dataset.s = (it.t+' '+it.d+' '+(it.k||'')+' '+it.f).toLowerCase();
+    a.innerHTML = `
+      <span class="st" data-st></span>
+      <div class="row1"><span class="ic">${it.ic}</span><span class="t">${it.t}</span></div>
+      <div class="d">${it.d}</div>
+      <div class="tags">${it.db?`<span class="db ${it.db}">${it.db}</span>`:''}</div>`;
+    grid.appendChild(a); ALL.push(a);
+  });
+  sec.appendChild(grid); board.appendChild(sec);
+});
+document.getElementById('total').textContent = ALL.length;
+
+/* ── فلتر فوري ── */
+const q = document.getElementById('q'), empty = document.getElementById('empty');
+const shownPill = document.getElementById('shownPill'), shown = document.getElementById('shown');
+function applyFilter(){
+  const term = q.value.trim().toLowerCase();
+  let vis = 0;
+  ALL.forEach(a => { const ok = !term || a.dataset.s.includes(term);
+    a.style.display = ok?'':'none'; if(ok) vis++; });
+  document.querySelectorAll('.section').forEach(sec => {
+    const any = [...sec.querySelectorAll('.card')].some(c => c.style.display!=='none');
+    sec.style.display = any?'':'none';
+  });
+  shown.textContent = vis; shownPill.style.display = term?'':'none';
+  empty.style.display = (term && vis===0)?'block':'none';
+  document.getElementById('qEcho').textContent = q.value;
+}
+q.addEventListener('input', applyFilter);
+document.addEventListener('keydown', e => {
+  if(e.key==='/' && document.activeElement!==q){ e.preventDefault(); q.focus(); }
+  else if(e.key==='Escape' && document.activeElement===q){ q.value=''; applyFilter(); q.blur(); }
+});
+
+/* ── فحص النشر: HEAD لكل صفحة (نفس المصدر) — يكشف الملفات غير المرفوعة (404) ── */
+let scanning = false;
+async function runScan(){
+  if(scanning) return; scanning = true;
+  const btn=document.getElementById('scanBtn'), txt=document.getElementById('scanTxt'),
+        dot=document.getElementById('scanDot'), bar=document.getElementById('scan-bar');
+  btn.disabled=true; dot.style.background='var(--warn)';
+  ALL.forEach(a=>{ a.querySelector('[data-st]').className='st loading'; a.classList.remove('is404'); });
+  let ok=0, err=0, done=0;
+  const q2=[...ALL];
+  async function worker(){
+    while(q2.length){
+      const a=q2.shift(); const st=a.querySelector('[data-st]');
+      try{
+        let r=await fetch(a.dataset.f,{method:'HEAD',cache:'no-store'});
+        if(r.status===405||r.status===501) r=await fetch(a.dataset.f,{method:'GET',cache:'no-store'});
+        if(r.ok){ st.className='st ok'; ok++; }
+        else if(r.status===404){ st.className='st err'; a.classList.add('is404'); err++; }
+        else { st.className='st warn'; err++; }
+      }catch(e){ st.className='st err'; a.classList.add('is404'); err++; }
+      done++; txt.textContent=`فحص… ${done}/${ALL.length}`;
+      bar.style.width=(done/ALL.length*100)+'%';
+    }
+  }
+  await Promise.all([worker(),worker(),worker(),worker(),worker(),worker()]);
+  document.getElementById('okN').textContent=ok;
+  document.getElementById('errN').textContent=err;
+  document.getElementById('scanPill').style.display='';
+  txt.textContent = err?`اكتمل — ${err} مفقودة`:'اكتمل ✓ الكل مرفوع';
+  dot.style.background = err?'var(--err)':'var(--ok)';
+  setTimeout(()=>{ bar.style.width='0'; },900);
+  btn.disabled=false; scanning=false;
+}
+</script>
+<script src="gmt-hints.js?v=20260926"></script>
+<script src="gmt-pwa.js?v=20260926"></script>
+<script src="gmt-selfcheck.js?v=20260926"></script>
+<script src="gmt-guide-updates.js?v=20260926"></script>
+<script src="gmt-brain.js?v=20260926"></script>
+<!-- 🆕 «شو الجديد» — نافذة تُعرَض مرّة واحدة لكل دفعة، وزرّ دائم بعدها.
+     لا تُحمَّل على صفحات الزبون إطلاقاً (أخبار داخلية). -->
+<script src="gmt-whatsnew.js?v=20260926"></script>
+</body>
+</html>

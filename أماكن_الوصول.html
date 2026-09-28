@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<script>/* 🔒 صفحة داخلية — تسمح بالواجهات الداخلية (تلميحات · مفتّش · فحص ذاتي).
+   الغياب = صفحة عامّة: المنع افتراضياً كي لا يكون النسيان تسريباً. */
+window.GMT_INTERNAL = 1;</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>أماكن الوصول — مكاتب شركات الشحن</title>
+<link rel="icon" type="image/jpeg" href="logo.jpg">
+<link rel="stylesheet" href="lib/tailwind.css?v=20260926">
+<link rel="stylesheet" href="gmt-theme.css?v=20260926">
+<style>
+  :root{ --red:#D5001C; --ink:#111827; --mut:#6B7280; --line:#E9ECF1; --bg:#F7F8FA; --card:#FFFFFF; }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --ink:#F3F4F6; --mut:#9CA3AF; --line:#2A2F3A; --bg:#12151B; --card:#1A1E26; }
+  }
+  :root[data-theme="dark"]{ --ink:#F3F4F6; --mut:#9CA3AF; --line:#2A2F3A; --bg:#12151B; --card:#1A1E26; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Cairo","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.8}
+  .wrap{max-width:1000px;margin:0 auto;padding:16px 14px 60px}
+  header{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px;
+         display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  header img{height:44px;width:auto;object-fit:contain;flex-shrink:0}
+  .hbar{padding-inline-start:12px;border-inline-start:2px solid var(--line)}
+  h1{font-size:17px;font-weight:900;color:var(--red)}
+  .sub{font-size:11.5px;color:var(--mut);font-weight:700}
+  .tools{position:sticky;top:0;z-index:20;background:var(--bg);padding:8px 0 10px}
+  input[type=search]{width:100%;padding:11px 14px;border-radius:12px;border:1.5px solid var(--line);
+    background:var(--card);color:var(--ink);font-family:inherit;font-size:14px;font-weight:700;outline:none;text-align:center}
+  input[type=search]:focus{border-color:var(--red)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .chip{padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);
+    color:var(--ink);font-family:inherit;font-size:11.5px;font-weight:800;cursor:pointer}
+  .chip.on{background:var(--red);color:#fff;border-color:var(--red)}
+  .cityhead{display:flex;align-items:center;gap:8px;margin:18px 0 8px}
+  .cityhead b{font-size:14px;font-weight:900}
+  .cityhead span{font-size:11px;color:var(--mut);font-weight:700}
+  .cityhead i{flex:1;height:1px;background:var(--line);display:block}
+  .grid{display:grid;grid-template-columns:1fr;gap:8px}
+  @media(min-width:620px){ .grid{grid-template-columns:1fr 1fr} }
+  @media(min-width:940px){ .grid{grid-template-columns:1fr 1fr 1fr} }
+  .off{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px 13px}
+  .off b{display:block;font-size:13.5px;font-weight:900;margin-bottom:2px}
+  .off p{font-size:11.5px;color:var(--mut);font-weight:700;line-height:1.7}
+  .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .act{padding:4px 11px;border-radius:9px;border:1px solid var(--line);background:transparent;
+    color:var(--ink);font-family:inherit;font-size:11px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}
+  .act.p{background:#ECFDF5;color:#047857;border-color:#A7F3D0}
+  .act.t{background:#EEF2FF;color:#4338CA;border-color:#C7D2FE}
+  .co{display:inline-block;font-size:10px;font-weight:900;color:var(--red);background:rgba(213,0,28,.08);
+      border-radius:7px;padding:1px 8px;margin-top:6px}
+  .empty{text-align:center;padding:40px 16px;color:var(--mut);font-weight:800;font-size:13px}
+  .back{display:inline-block;margin-bottom:10px;font-size:12px;font-weight:800;color:var(--mut);text-decoration:none}
+  .back:hover{color:var(--red)}
+  @media print{ .tools,.back,.row{display:none!important} body{background:#fff} .off{break-inside:avoid} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="orders.html">← رجوع للأوردرات</a>
+
+  <header>
+    <img src="logo.png" alt="مجموعة ميديا تيك"
+         onerror="this.onerror=null;this.src='logo.jpg'">
+    <div class="hbar">
+      <h1>📍 أماكن الوصول</h1>
+      <div class="sub" id="count">…</div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       (2026-09-26 · بلاغ المالك) «زرّ أماكن الوصول ما لازم يطلع منبثق، لأنّه
+       عم يكون سيّئ… ليست مريحة وفيها شيء عم يختفي، شيء مو ضابط».
+       ⇒ صفحة كاملة بدل نافذة: لا سقف ارتفاع يقطع القائمة، ولا طبقة تحجب،
+       ولا تمرير داخل تمرير. وتُفتح في تبويب، وتُطبَع، وتُرسَل للموظّف كرابط.
+       المصدر نفسه: GMTOffices — أي مكتب يُضاف هناك يظهر هنا تلقائياً.
+       ══════════════════════════════════════════════════════════════════════ -->
+  <div class="tools">
+    <input type="search" id="q" placeholder="ابحث: دمشق · جرمانا · محراب · رقم هاتف…" autocomplete="off">
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div id="list"></div>
+</div>
+
+<script src="gmt-brand.js?v=20260926"></script>
+<script src="gmt-shipping-offices.js?v=20260926"></script>
+<script>
+(function () {
+  'use strict';
+  var co = '';
+  var qEl = document.getElementById('q');
+  var listEl = document.getElementById('list');
+  var chipsEl = document.getElementById('chips');
+  var countEl = document.getElementById('count');
+
+  function esc(s) {
+    return String(s === null || s === undefined ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  if (!window.GMTOffices) {
+    listEl.innerHTML = '<div class="empty">ملفّ المكاتب غير محمّل (gmt-shipping-offices.js)</div>';
+    return;
+  }
+
+  var G = window.GMTOffices;
+  var companies = G.companies();
+  countEl.textContent = G.all().length + ' مكتباً · ' + companies.length + ' شركات — اسأل الزبون من أي مكتب يستلم';
+
+  chipsEl.innerHTML =
+    '<button class="chip on" data-co="">كل الشركات</button>' +
+    companies.map(function (c) {
+      var t = G.trackUrlOf && G.trackUrlOf(c);
+      return '<button class="chip" data-co="' + esc(c) + '">' + esc(c) + (t ? ' 📡' : '') + '</button>';
+    }).join('');
+  chipsEl.addEventListener('click', function (e) {
+    var b = e.target.closest('.chip');
+    if (!b) return;
+    co = b.getAttribute('data-co') || '';
+    [].forEach.call(chipsEl.querySelectorAll('.chip'), function (x) { x.classList.toggle('on', x === b); });
+    render();
+  });
+  qEl.addEventListener('input', render);
+
+  function render() {
+    var q = qEl.value.trim();
+    /* بلا بحث: كل المكاتب مرتّبة بالمدينة — الموظّف يتصفّح. مع بحث: نتائج المحرّك
+       نفسه الذي يستعمله حقل العنوان، فما يجده هنا يجده هناك. */
+    var rows = q ? G.search(q, co || null, 400) : G.all(co || null);
+    if (!rows.length) {
+      listEl.innerHTML = '<div class="empty">ما في مكتب مطابق<br><span style="font-weight:700;font-size:12px">جرّب اسم المدينة أو جزءاً من اسم المكتب</span></div>';
+      return;
+    }
+    /* تجميع بالمدينة — 166 مكتباً بلا تجميع كتلةٌ لا تُقرأ */
+    var byCity = {}, order = [];
+    rows.forEach(function (o) {
+      if (!byCity[o.city]) { byCity[o.city] = []; order.push(o.city); }
+      byCity[o.city].push(o);
+    });
+    listEl.innerHTML = order.map(function (city) {
+      return '<div class="cityhead"><b>' + esc(city) + '</b><span>' + byCity[city].length + '</span><i></i></div>' +
+        '<div class="grid">' + byCity[city].map(function (o) {
+          var tel = String(o.phone || '').replace(/[^0-9+]/g, '');
+          var track = G.trackUrlOf && G.trackUrlOf(o.company);
+          return '<div class="off">' +
+            '<b>' + esc(o.name) + '</b>' +
+            '<p>' + esc(o.addr || '—') + (o.phone ? '<br><span dir="ltr">☎ ' + esc(o.phone) + '</span>' : '') + '</p>' +
+            '<span class="co">' + esc(o.company) + '</span>' +
+            '<div class="row">' +
+              (tel ? '<a class="act p" href="tel:' + esc(tel) + '">اتصال</a>' : '') +
+              '<button class="act" data-copy="' + esc(block(o)) + '">نسخ العنوان</button>' +
+              (track ? '<a class="act t" href="' + esc(track) + '" target="_blank" rel="noopener">تتبّع</a>' : '') +
+            '</div>' +
+          '</div>';
+        }).join('') + '</div>';
+    }).join('');
+  }
+
+  function block(o) {
+    var L = [o.city + ' — ' + o.name];
+    if (o.addr) L.push(o.addr);
+    if (o.phone) L.push(o.phone);
+    if (o.company) L.push('(' + o.company + ')');
+    return L.join('\n');
+  }
+
+  listEl.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-copy]');
+    if (!b) return;
+    var t = b.getAttribute('data-copy');
+    try {
+      navigator.clipboard.writeText(t);
+      var old = b.textContent;
+      b.textContent = '✅ نُسخ';
+      setTimeout(function () { b.textContent = old; }, 1400);
+    } catch (_) { /* بعض المتصفّحات تمنع الحافظة بلا إيماءة — الاختيار اليدوي يبقى */ }
+  });
+
+  render();
+})();
+</script>
+<!-- 🆕 «شو الجديد» — نافذة تُعرَض مرّة واحدة لكل دفعة، وزرّ دائم بعدها.
+     لا تُحمَّل على صفحات الزبون إطلاقاً (أخبار داخلية). -->
+<script src="gmt-whatsnew.js?v=20260926"></script>
+</body>
+</html>
